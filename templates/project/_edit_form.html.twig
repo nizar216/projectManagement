@@ -1,0 +1,51 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+	{{ form_start(form) }}
+
+	{{ form_row(form.title) }}
+	{{ form_row(form.description) }}
+
+	<div class="form-group">
+		{{ form_label(form.imageFile, 'Project Image') }}
+		{% if project.image %}
+			<div id="image-preview-container">
+				<img id="image-preview" src="{{ asset('uploads/projects/' ~ project.image) }}" alt="Existing Image" style="max-width: 200px; margin: 10px auto; cursor: pointer;" onclick="document.getElementById('project_imageFile').click();">
+			</div>
+		{% endif %}
+		{{ form_widget(form.imageFile, { 'attr': { 'class': 'form-control', 'id': 'project_imageFile', 'style': 'display:none;' } }) }}
+		{{ form_errors(form.imageFile) }}
+	</div>
+	{{ form_row(form.filename) }}
+	{{ form_row(form.numberOfTasks) }}
+	{{ form_row(form.status) }}
+	{{form_widget(form._token)}}
+	<div class="row justify-content-center mt-4">
+		<div class="col-auto d-flex justify-content-between">
+			<button type="submit" class="btn btn-primary btn-lg">{{ button_label|default('Save') }}</button>
+			{{ form_end(form) }}
+			{% if edit_mode %}
+				{{ include('project/_delete_form.html.twig') }}
+			{% endif %}
+		</div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+	<script>
+		$(document).ready(function () {
+$('#project_imageFile').change(function () {
+readURL(this);
+});
+
+function readURL(input) {
+if (input.files && input.files[0]) {
+var reader = new FileReader();
+reader.onload = function (e) {
+$('#image-preview').attr('src', e.target.result);
+};
+reader.readAsDataURL(input.files[0]);
+}
+}
+});
+	</script>
+{% endblock %}

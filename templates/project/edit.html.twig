@@ -1,0 +1,16 @@
+{% extends 'project/base.html.twig' %}
+
+{% block title %}
+	Edit Project
+{% endblock %}
+
+{% block body %}
+	<div class="container">
+		<div class="card bg-light">
+			<article class="card-body">
+				<h4 class="card-title mt-3 text-center">Edit Project</h4>
+				{{ include('project/_edit_form.html.twig', {button_label: 'Update', edit_mode: true}) }}
+			</article>
+		</div>
+	</div>
+{% endblock %}

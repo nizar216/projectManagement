@@ -1,0 +1,68 @@
+{% extends 'project/base.html.twig' %}
+
+{% block title %}
+	Project index
+{% endblock %}
+
+
+{% block body %}
+
+	{{ form_start(form, {'attr': {'class': 'mb-4'}}) }}
+
+	<div class="row">
+		<div class="col-md-3 form-group">
+			{{ form_label(form.title, 'Project Name', {'label_attr': {'class': 'sr-only'}}) }}
+			{{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'Project Name'}}) }}
+		</div>
+
+		<div class="col-md-3 form-group">
+			{{ form_label(form.status, 'Status' , {'label_attr': {'class': 'sr-only'}}) }}
+			{{ form_widget(form.status, {'attr': {'class': 'form-control'}}) }}
+		</div>
+
+		<div class="col-md-5 form-group">
+			{{ form_label(form.filename, 'Filename', {'label_attr': {'class': 'sr-only'}}) }}
+			{{ form_widget(form.filename, {'attr': {'class': 'form-control', 'placeholder': 'Filename'}}) }}
+		</div>
+
+		<div class="col-md form-group">
+			<button type="submit" class="btn btn-dark">
+				<i class="fa fa-filter" aria-hidden="true"></i>
+			</button>
+		</div>
+	</div>
+
+	{{ form_end(form) }}
+
+
+	<div class="row">
+		{% for project in projects %}
+			<div class="col-md-3 mb-4">
+				<div class="card text-center">
+					<img src="{{ asset('uploads/projects/' ~ project.image) }}" class="card-img-top" alt="{{ project.title }}" style="max-height: 150px;"/>
+					<div class="card-body">
+						<h5 class="card-title">{{ project.title }}</h5>
+						<p class="card-text">{{ project.description }}</p>
+						{% if is_granted('ROLE_ADMIN') %}
+							<a href="{{ path('app_project_edit', { id: project.id }) }}" class="btn btn-outline-light text-dark" style="border-color: black;">
+								<i class="fa fa-suitcase" aria-hidden="true" style="color: red;"></i>
+								<span class="ml-2">Edit Project</span>
+							</a>
+						{% endif %}
+					</div>
+					<div class="card-footer text-muted small d-flex justify-content-between">
+						<div>last updated
+							{{ project.updatedAtString }}</div>
+						<div>{{ project.numberOfTasks }}
+							tasks</div>
+					</div>
+				</div>
+			</div>
+		{% else %}
+			<div class="col-12">
+				<p>No records found.</p>
+			</div>
+		{% endfor %}
+		{{ knp_pagination_render(projects, 'pagination.html.twig') }}
+	</div>
+{% endblock %}
