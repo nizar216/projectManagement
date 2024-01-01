@@ -37,8 +37,6 @@ class Project
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
     private ?\DateTimeInterface $updatedAt = null;
 
-    private ?string $updatedAtString = null;
-
     public function getId(): ?int
     {
         return $this->id;

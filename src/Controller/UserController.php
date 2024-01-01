@@ -2,42 +2,41 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Form\UserRegistrationFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use App\Form\UserProfileType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class RegistrationController extends AbstractController
+class UserController extends AbstractController
 {
-    #[Route('/registration', name: 'app_registration', methods: ['GET', 'POST'])]
-    public function register(Request $request, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $entityManager): Response
+    #[Route('/user/edit', name: 'app_user_edit', methods: ['GET', 'POST'])]
+    public function editProfile(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher)
     {
-        $user = new User();
-        $form = $this->createForm(UserRegistrationFormType::class, $user);
+        $user = $this->getUser();
+        $form = $this->createForm(UserProfileType::class, $user);
 
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
             $this->handleImageUpload($form, $user);
             $hashedPassword = $passwordHasher->hashPassword(
                 $user,
                 $form->get('password')->getData()
             );
             $user->setPassword($hashedPassword);
-
             $entityManager->persist($user);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Registration successful!');
+            $this->addFlash('success', 'Profile updated successfully');
 
-            return $this->redirectToRoute('app_login'); // Adjust the route as needed
+            return $this->redirectToRoute('app_project_index');
         }
 
-        return $this->render('registration/register.html.twig', [
+        return $this->render('user/edit_profile.html.twig', [
+            'user' => $user,
             'form' => $form->createView(),
         ]);
     }
