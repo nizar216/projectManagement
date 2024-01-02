@@ -20,7 +20,7 @@
 		{% endblock %}
 	</head>
 	<body>
-		<div class="dash">
+		<div class="dash dash-compact">
 			<div class="dash-nav dash-nav-dark">
 				<header>
 					<a class="menu-toggle">
@@ -31,10 +31,12 @@
 					</a>
 				</header>
 				<nav class="dash-nav-list">
-					<a href="{{ path('app_project_new') }}" class="dash-nav-item">
-						<i class="fa-solid fa-plus"></i>
-						Create new project
-					</a>
+					{% if is_granted('ROLE_ADMIN') %}
+						<a href="{{ path('app_project_new') }}" class="dash-nav-item">
+							<i class="fa-solid fa-plus"></i>
+							Create new project
+						</a>
+					{% endif %}
 				</nav>
 			</div>
 			<div class="dash-app">

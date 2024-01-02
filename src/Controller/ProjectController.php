@@ -16,6 +16,7 @@ use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use App\Repository\UserRepository;
+use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 #[Route('/project')]
 class ProjectController extends AbstractController
@@ -78,6 +79,9 @@ class ProjectController extends AbstractController
     #[Route('/{id}/edit', name: 'app_project_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Project $project, EntityManagerInterface $entityManager, MailerInterface $mailer, UserRepository $userRepository): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            throw new AccessDeniedException('Access denied. You do not have the required role.');
+        }
         $originalStatus = $project->getStatus(); // Store the original status before form submission
 
         $form = $this->createForm(ProjectType::class, $project);
@@ -104,6 +108,9 @@ class ProjectController extends AbstractController
     #[Route('/{id}', name: 'app_project_delete', methods: ['POST'])]
     public function delete(Request $request, Project $project, EntityManagerInterface $entityManager): Response
     {
+        if (!$this->isGranted('ROLE_ADMIN')) {
+            throw new AccessDeniedException('Access denied. You do not have the required role.');
+        }
         if ($this->isCsrfTokenValid('delete' . $project->getId(), $request->request->get('_token'))) {
             $entityManager->remove($project);
             $entityManager->flush();
